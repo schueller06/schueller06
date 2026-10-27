@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Probe-Website</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    /* Farben und Schrift */
+    :root {
+      --bg: #000000;
+      --fg: #ececea;
+      --muted: #6f6f6b;
+      --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      color-scheme: dark;
+    }
+
+    html { height: 100%; }
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--mono);
+      font-size: 14px;
+    }
+
+    /* Navigation oben, Seitenzähler unten */
+    .wrap {
+      box-sizing: border-box;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 28px 16px;
+    }
+    @media (min-width: 700px) {
+      .wrap { padding: 40px 48px; }
+    }
+
+    nav { display: flex; gap: 28px; }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      padding-bottom: 4px;
+      border-bottom: 1px solid transparent;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+    nav a:hover { color: var(--fg); }
+    nav a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--fg); }
+    nav a:focus-visible { outline: 1px solid var(--fg); outline-offset: 4px; }
+
+    [hidden] { display: none !important; }
+
+    .page { animation: fade 300ms ease; }
+    .counter {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    @keyframes fade { from { opacity: 0.2; } to { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) {
+      .page { animation: none; }
+      nav a { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav aria-label="Seiten">
+      <a href="#seite-1">Seite 1</a>
+      <a href="#seite-2">Seite 2</a>
+    </nav>
+
+    <main>
+      <section class="page" data-page="seite-1">
+        <p class="counter">1 / 2</p>
+      </section>
+      <section class="page" data-page="seite-2" hidden>
+        <p class="counter">2 / 2</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Zeigt die Seite an, die in der Adresse nach dem # steht
+    const pages = ["seite-1", "seite-2"];
+
+    function show() {
+      const wanted = location.hash.slice(1);
+      const current = pages.includes(wanted) ? wanted : "seite-1";
+
+      document.querySelectorAll("[data-page]").forEach((section) => {
+        section.hidden = section.dataset.page !== current;
+      });
+
+      document.querySelectorAll("nav a").forEach((link) => {
+        if (link.getAttribute("href") === "#" + current) {
+          link.setAttribute("aria-current", "page");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    }
+
+    window.addEventListener("hashchange", show);
+    show();
+  </script>
+</body>
+</html>
